@@ -4,87 +4,105 @@
 
 using namespace std;
 
-
-void PrintListMonad(const auto& vec)
-{
-    for(auto value : vec)
-    {
-        if constexpr (is_integral_v<decltype(value)>)
-        {
-            cout << value << " ";
-        }
-        else
-        {
-            cout << "[ ";
-            for(auto v2 : value)
-            {
-                cout << v2 << " ";
-            }
-            cout << "]\n";
-        }
-        
-    }
-    cout << "\n";
-}
-
-
+// std::vector can be a list monad.  Use the >> operator as the bind function
 template <typename T>
-auto operator>>(const vector<T>& m, auto f)
+auto operator>>(const vector<T>& monad, auto f)
 {
-    vector<remove_reference_t<decltype(f(m.front()).front())>> result;
-    for(auto& item : m)
+    // Declare a vector of the same type that the function f returns
+    vector<remove_reference_t<decltype(f(monad.front()).front())>> result;
+    for(auto& item : monad)
     {
+        // Apply the function f to each item in the monad. f will return a
+        // new list monad containing 0 or more items. 
         const auto r = f(item);
+        // Concatenate the results of f with previous results
         result.insert(result.end(), begin(r), end(r));
     }
     
     return result;
 }
 
+// The Pure function returns a vector containing one item, t
 auto Pure(auto t)
 {
     return vector{t};
 }
 
+// A function to double items in the list monad
 auto Double(int i)
 {
     return Pure(2 * i);
 }
 
+// A function to increment items
 auto Increment(int i)
 {
     return Pure(i + 1);
 }
 
+// A function to convert items to a string
+auto NiceNumber(int i)
+{
+    return Pure(to_string(i) + " is a nice number\n");
+}
+
+// A function to map an item to a sequence ending at max value
+// for example: 97 -> {97, 98, 99, 100}
 auto UpperSequence = [](auto startingVal)
 {
+    const int MaxValue = 500;
     vector<decltype(startingVal)> sequence;
-    while(startingVal <= 500) 
+    while(startingVal <= MaxValue) 
         sequence.push_back(startingVal++);
     return sequence;
 };
 
-//auto CheckPythagorean = [
+// Print contents of a vector
+void PrintVector(const auto& vec)
+{
+    cout << " ";
+    for(auto value : vec)
+    {
+        cout << value << " ";
+    }
+    cout << "\n";
+}
+
+// Print the Pythagorean triples
+void PrintTriples(const auto& vec)
+{
+    cout << "Pythagorean triples:\n";
+    for(auto it = vec.begin(); it != vec.end();)
+    {
+        auto x = *it++;
+        auto y = *it++;
+        auto z = *it++;
+        
+        cout << x << ", " << y << ", " << z << "\n";
+    }
+    cout << "\n";
+}
 
 int main()
 {
-  
+    // Apply Increment, Double, and NiceNumber to {2, 3, 4} using the monadic bind 
     auto zzz = 
         vector<int> {2, 3, 4} >> 
         Increment >> 
-        Double;
+        Double >>
+        NiceNumber;
+        
+    PrintVector(zzz);
     
-    
-    PrintListMonad(zzz);
-    
-    auto sss = UpperSequence(1) >> 
+    // Find Pythagorean triples using the list monad.  The 'x' monad list goes
+    // from 1 to the max; the 'y' goes from the current 'x' to the max; and 'z'
+    // goes from the current 'y' to the max.  The last bind returns the triplet
+    // if it is Pythagorean, otherwise it returns an empty list monad.
+    auto pythagoreanTriples = UpperSequence(1) >> 
         [](int x){return UpperSequence(x) >>
         [x](int y){return UpperSequence(y) >>
         [x, y](int z){return (x*x + y*y == z*z) ? vector{x, y, z} : vector<int>{};};};};
     
-    
-    PrintListMonad(sss);
-    
-                
+    PrintTriples(pythagoreanTriples);
             
 }
