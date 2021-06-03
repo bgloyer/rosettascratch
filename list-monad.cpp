@@ -1,4 +1,6 @@
 #include <iostream>
+#include <numeric>
+#include <tuple>
 #include <vector>
 
 using namespace std;
@@ -56,6 +58,7 @@ auto UpperSequence = [](auto startingVal)
     return sequence;
 };
 
+
 // Print contents of a vector
 void PrintVector(const auto& vec)
 {
@@ -82,6 +85,18 @@ void PrintTriples(const auto& vec)
     cout << "\n";
 }
 
+// Print the Pythagorean triples
+void PrintTriples(const vector<tuple<int,int,int>>& vec)
+{
+    cout << "Pythagorean triples:\n";
+    for(auto [x, y, z] : vec)
+    {
+        cout << x << ", " << y << ", " << z << "\n";
+    }
+    cout << "\n";
+}
+
+
 int main()
 {
     // Apply Increment, Double, and NiceNumber to {2, 3, 4} using the monadic bind 
@@ -98,9 +113,9 @@ int main()
     // goes from the current 'y' to the max.  The last bind returns the triplet
     // if it is Pythagorean, otherwise it returns an empty list monad.
     auto pythagoreanTriples = UpperSequence(1) >> 
-        [](int x){return UpperSequence(x) >>
-        [x](int y){return UpperSequence(y) >>
-        [x, y](int z){return (x*x + y*y == z*z) ? vector{x, y, z} : vector<int>{};};};};
+        [](int x){return UpperSequence(x) >> 
+        [x](int y){ return UpperSequence(y) >>
+        [x, y](int z){return (x*x + y*y == z*z && gcd(x, y) == 1) ? vector{make_tuple(x, y, z)} : vector<tuple<int,int,int>>{};};};};
     
     PrintTriples(pythagoreanTriples);
 }
