@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -47,7 +46,7 @@ auto NiceNumber(int i)
 }
 
 // A function to map an item to a sequence ending at max value
-// for example: 97 -> {97, 98, 99, 100}
+// for example: 497 -> {497, 498, 499, 500}
 auto UpperSequence = [](auto startingVal)
 {
     const int MaxValue = 500;
@@ -86,13 +85,13 @@ void PrintTriples(const auto& vec)
 int main()
 {
     // Apply Increment, Double, and NiceNumber to {2, 3, 4} using the monadic bind 
-    auto zzz = 
+    auto listMonad = 
         vector<int> {2, 3, 4} >> 
         Increment >> 
         Double >>
         NiceNumber;
         
-    PrintVector(zzz);
+    PrintVector(listMonad);
     
     // Find Pythagorean triples using the list monad.  The 'x' monad list goes
     // from 1 to the max; the 'y' goes from the current 'x' to the max; and 'z'
@@ -104,5 +103,4 @@ int main()
         [x, y](int z){return (x*x + y*y == z*z) ? vector{x, y, z} : vector<int>{};};};};
     
     PrintTriples(pythagoreanTriples);
-            
 }
