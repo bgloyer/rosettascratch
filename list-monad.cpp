@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <numeric>
 #include <tuple>
@@ -47,17 +48,42 @@ auto NiceNumber(int i)
     return Pure(to_string(i) + " is a nice number\n");
 }
 
+const int MaxPerimeter = 100000;
+
 // A function to map an item to a sequence ending at max value
 // for example: 497 -> {497, 498, 499, 500}
 auto UpperSequence = [](auto startingVal)
 {
-    const int MaxValue = 500;
     vector<decltype(startingVal)> sequence;
-    while(startingVal <= MaxValue) 
+    while(startingVal < MaxPerimeter/3) 
         sequence.push_back(startingVal++);
     return sequence;
 };
 
+auto RelativePrimePair = [](auto startingVal)
+{
+    vector<tuple<decltype(startingVal), decltype(startingVal)>> sequence;
+    for(auto yVal = startingVal + 1; yVal < (MaxPerimeter - startingVal) / 2; ++yVal)
+    {
+        if(gcd(startingVal, yVal) == 1)
+            sequence.emplace_back(startingVal, yVal);
+    }
+    return sequence;
+};
+
+auto Pythagorean = [](auto pair)
+{
+    auto [x, y] = pair;
+    using valtype = decltype(x);
+    valtype oddAdjustment = y % 2 + (x + y) % 2;
+    vector<tuple<valtype, valtype, valtype>> pythagoreanTriples;
+    for(auto z = y + oddAdjustment; x + y + z < MaxPerimeter; z += 2)
+    {
+        if(x*x + y*y == z*z)
+            pythagoreanTriples.emplace_back(x, y, z);
+    }
+    return pythagoreanTriples;
+};
 
 // Print contents of a vector
 void PrintVector(const auto& vec)
@@ -73,7 +99,7 @@ void PrintVector(const auto& vec)
 // Print the Pythagorean triples
 void PrintTriples(const auto& vec)
 {
-    cout << "Pythagorean triples:\n";
+    cout << vec.size() << " Pythagorean triples:\n";
     for(auto it = vec.begin(); it != vec.end();)
     {
         auto x = *it++;
@@ -88,7 +114,7 @@ void PrintTriples(const auto& vec)
 // Print the Pythagorean triples
 void PrintTriples(const vector<tuple<int,int,int>>& vec)
 {
-    cout << "Pythagorean triples:\n";
+    cout << vec.size() << " Pythagorean triples:\n";
     for(auto [x, y, z] : vec)
     {
         cout << x << ", " << y << ", " << z << "\n";
@@ -108,14 +134,19 @@ int main()
         
     PrintVector(listMonad);
     
-    // Find Pythagorean triples using the list monad.  The 'x' monad list goes
-    // from 1 to the max; the 'y' goes from the current 'x' to the max; and 'z'
-    // goes from the current 'y' to the max.  The last bind returns the triplet
-    // if it is Pythagorean, otherwise it returns an empty list monad.
-    auto pythagoreanTriples = UpperSequence(1) >> 
-        [](int x){return UpperSequence(x) >> 
-        [x](int y){ return UpperSequence(y) >>
-        [x, y](int z){return (x*x + y*y == z*z && gcd(x, y) == 1) ? vector{make_tuple(x, y, z)} : vector<tuple<int,int,int>>{};};};};
+//     // Find Pythagorean triples using the list monad.  The 'x' monad list goes
+//     // from 1 to the max; the 'y' goes from the current 'x' to the max; and 'z'
+//     // goes from the current 'y' to the max.  The last bind returns the triplet
+//     // if it is Pythagorean, otherwise it returns an empty list monad.
+//     auto pythagoreanTriples = UpperSequence(1) >> 
+//         [](int x){return UpperSequence(x) >> 
+//         [x](int y){ return UpperSequence(y) >>
+//         [x, y](int z){return (x*x + y*y == z*z && gcd(x, y) == 1) ? vector{make_tuple(x, y, z)} : vector<tuple<int,int,int>>{};};};};
+
+        auto pythagoreanTriples = UpperSequence(1) >> 
+            RelativePrimePair >>
+            Pythagorean;
+
     
     PrintTriples(pythagoreanTriples);
 }
