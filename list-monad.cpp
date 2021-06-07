@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <execution>
 #include <cmath>
 #include <iostream>
 #include <numeric>
@@ -6,21 +8,59 @@
 
 using namespace std;
 
+#include <chrono>
+class ScopeTimer
+{
+public:
+        ScopeTimer(std::string name) : mName(std::move(name)), mStart(std::chrono::steady_clock::now()) { }
+        ScopeTimer() : mName("Timer"), mStart(std::chrono::steady_clock::now()) { }
+        ~ScopeTimer()
+        {
+                const auto end = std::chrono::steady_clock::now();
+                std::cout << mName << ": " << std::chrono::duration <double, std::milli>(end - mStart).count() << " ms\n";
+        }
+
+private:
+        const std::string mName;
+        const std::chrono::time_point<std::chrono::steady_clock> mStart;
+};
+
+
 // std::vector can be a list monad.  Use the >> operator as the bind function
 template <typename T>
 auto operator>>(const vector<T>& monad, auto f)
 {
     // Declare a vector of the same type that the function f returns
     vector<remove_reference_t<decltype(f(monad.front()).front())>> result;
-    for(auto& item : monad)
+    auto concat = [](auto v1, auto v2)
     {
-        // Apply the function f to each item in the monad. f will return a
-        // new list monad containing 0 or more items. 
-        const auto r = f(item);
-        // Concatenate the results of f with previous results
-        result.insert(result.end(), begin(r), end(r));
-    }
+        if(v1.size() < v2.size()) swap(v1, v2);
+        v1.insert(v1.end(), begin(v2), end(v2));
+        return v1;
+    };
     
+  //  transform(monad.begin(), monad.end(), result.begin(), f);
+    //result = transform_reduce(execution::seq, monad.begin(), monad.end(), result, concat, f);
+
+    vector<remove_reference_t<decltype(f(monad.front()))>> out(monad.size());
+   // vector<int> out;
+    transform(execution::par, monad.begin(), monad.end(), out.begin(), f);
+ //   transform(monad.begin(), monad.end(), back_inserter(out), f);
+    int count = 0;
+    for(const auto& sub : out)
+    {
+        count += sub.size();
+    }
+//    result.reserve(count);
+    for_each(out.begin(), out.end(), [&result](const auto& item)
+    {
+        result.insert(result.end(), item.begin(), item.end());
+    });
+//     for(const auto& sub : out)
+//     {
+//         result.insert(result.end(), begin(sub), end(sub));
+//     }
+
     return result;
 }
 
@@ -48,7 +88,7 @@ auto NiceNumber(int i)
     return Pure(to_string(i) + " is a nice number\n");
 }
 
-const int MaxPerimeter = 100000;
+const int MaxPerimeter = 5000;
 
 // A function to map an item to a sequence ending at max value
 // for example: 497 -> {497, 498, 499, 500}
@@ -143,9 +183,11 @@ int main()
 //         [x](int y){ return UpperSequence(y) >>
 //         [x, y](int z){return (x*x + y*y == z*z && gcd(x, y) == 1) ? vector{make_tuple(x, y, z)} : vector<tuple<int,int,int>>{};};};};
 
-        auto pythagoreanTriples = UpperSequence(1) >> 
-            RelativePrimePair >>
-            Pythagorean;
+    ScopeTimer st;
+    
+    auto pythagoreanTriples = UpperSequence(1) >> 
+        RelativePrimePair >>
+        Pythagorean;
 
     
     PrintTriples(pythagoreanTriples);
