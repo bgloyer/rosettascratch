@@ -82,7 +82,7 @@ void PrintTriples(const auto& vec)
     cout << "\n";
 }
 
-int mainXXXX()
+int main()
 {
     // Apply Increment, Double, and NiceNumber to {2, 3, 4} using the monadic bind 
     auto listMonad = 
