@@ -4,12 +4,17 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(list-monad LANGUAGES CXX)
 
-message(${CMAKE_CXX_FLAGS_RELEASE})
-writer-monad.cpp
+cmake_minimum_required(VERSION 3.0)
 
-add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp maybe-monad.cpp faulhabers-triangle.cpp)
+set(CMAKE_CXX_STANDARD 20)
+
+project(list-monad LANGUAGES CXX)
+
+add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp
+writer-monad.cpp
 maybe-monad.cpp
-start-from-a-main-routine.cpp)
+start-from-a-main-routine.cpp
+coreguidelines.cpp)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
