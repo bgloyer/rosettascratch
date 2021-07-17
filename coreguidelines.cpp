@@ -13,8 +13,8 @@
     class WidgetUser
     {
     public:
-        WidgetUser(std::shared_ptr<widget> w) :
-            m_widget{w} {}
+        explicit WidgetUser(std::shared_ptr<widget> w) noexcept:
+            m_widget{std::move(w)} {}
         // ...
         
         // ...
@@ -33,16 +33,24 @@
         w = std::make_shared<widget>(widget{});
     }
 
+    void ChangeWidget2(const std::shared_ptr<widget>& w)
+    {
+        auto w2 = w;
+        w->g = 876868;
+        
+    }
+
 
 int main()
 {
     auto s = std::make_shared<widget>(widget{5});
     
-    WidgetUser  w(s);
+    WidgetUser  w(std::move(s));
     
     std::cout  << w.getValue();
     
     ChangeWidget(s);
+    ChangeWidget2(s);
     
     std::cout << "\ns " << s->g << " w " << w.getValue(); 
 }
