@@ -109,7 +109,7 @@ std::vector<Frac> faulhaberTraingle(int p) {
 	return coeffs;
 }
  
-int main() {
+int mainft() {
  
 	for (int i = 0; i < 10; i++) {
 		std::vector<Frac> coeffs = faulhaberTraingle(i);

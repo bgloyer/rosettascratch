@@ -41,7 +41,7 @@
     }
 
 
-int main()
+int maincg()
 {
     auto s = std::make_shared<widget>(widget{5});
     
@@ -52,7 +52,8 @@ int main()
     ChangeWidget(s);
     ChangeWidget2(s);
     
-    std::cout << "\ns " << s->g << " w " << w.getValue(); 
+    std::cout << "\ns " << s->g << " w " << w.getValue();
+    return 0;
 }
 
 

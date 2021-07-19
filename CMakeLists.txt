@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp
 writer-monad.cpp
 maybe-monad.cpp
 start-from-a-main-routine.cpp
+pythagorean.cpp
 coreguidelines.cpp)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
