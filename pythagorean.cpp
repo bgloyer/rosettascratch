@@ -123,11 +123,9 @@ auto CountTriplets(unsigned long long maxPerimeter)
                 continue;
             }
             
-            auto nn = n*n;
-            auto mm = m*m;
-            auto a = mm - nn;
+            auto a = m * m - n * n;
             auto b = 2 * m * n;
-            auto c = mm + nn;
+            auto c = m * m + n * n;
             auto perimeter = a + b + c;
             if(perimeter <= maxPerimeter)
             {
@@ -153,18 +151,12 @@ void Print(std::ranges::forward_range auto r)
 int main()
 {
     ScopeTimer st;
-    vector<unsigned long long> inputs{100, 1000, 10000, 100'000, 1000'000, 10'000'000, 100'000'000, 1000'000'000};//, 10'000'000'000};//100'000};
+    vector<unsigned long long> inputs{100, 1000, 10'000, 100'000,
+        1000'000, 10'000'000, 100'000'000, 1000'000'000,
+        10'000'000'000};  // This last one takes almost a minute
     for(auto maxPerimeter : inputs)
     {
-//        auto [total, primitive] = BruteForcePythagorean(maxPerimeter);
         auto [total, primitive] = CountTriplets(maxPerimeter);
-        cout << "\nMaxPerimeter: " << maxPerimeter << ", Total: " << total << ", Primitive: " << primitive ;
+        cout << "\nMax Perimeter: " << maxPerimeter << ", Total: " << total << ", Primitive: " << primitive ;
     }
-    //    vector<tuple<unsigned int, unsigned int> output(inputs.size());
-//    std::transform(inputs.begin(), inputs.end(), output.begin(), BruteForcePythagorean);
-//    Print(output);
-
-//    CountTriplets();
-    
-    
 }

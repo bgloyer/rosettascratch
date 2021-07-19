@@ -6,25 +6,9 @@
 #include <tuple>
 #include <vector>
 
+#include "ScopeTimer.h"
+
 using namespace std;
-
-#include <chrono>
-class ScopeTimer
-{
-public:
-        ScopeTimer(std::string name) : mName(std::move(name)), mStart(std::chrono::steady_clock::now()) { }
-        ScopeTimer() : mName("Timer"), mStart(std::chrono::steady_clock::now()) { }
-        ~ScopeTimer()
-        {
-                const auto end = std::chrono::steady_clock::now();
-                std::cout << mName << ": " << std::chrono::duration <double, std::milli>(end - mStart).count() << " ms\n";
-        }
-
-private:
-        const std::string mName;
-        const std::chrono::time_point<std::chrono::steady_clock> mStart;
-};
-
 
 // std::vector can be a list monad.  Use the >> operator as the bind function
 template <typename T>

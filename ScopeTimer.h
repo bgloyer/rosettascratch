@@ -1,3 +1,5 @@
+#pragma once
+
 #include <chrono>
 class ScopeTimer
 {
@@ -7,7 +9,7 @@ public:
         ~ScopeTimer()
         {
                 const auto end = std::chrono::steady_clock::now();
-                std::cout << mName << ": " << std::chrono::duration <double, std::milli>(end - mStart).count() << " ms\n";
+                std::cout << "\n" << mName << ": " << std::chrono::duration <double, std::milli>(end - mStart).count() << " ms\n";
         }
 
 private:
