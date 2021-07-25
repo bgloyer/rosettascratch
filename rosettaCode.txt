@@ -1,0 +1,6 @@
+=={{header|C++}}==
+<lang cpp>
+</lang>
+{{out}}
+<pre>
+</pre>
