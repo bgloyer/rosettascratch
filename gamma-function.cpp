@@ -8,7 +8,7 @@
 std::vector<double> CalculateCoefficients(int numCoeff)
 {
     std::vector<double> c(numCoeff);
-    double k1_factrl = 1.0; /* (k - 1)!*(-1)^k with 0!==1*/
+    double k1_factrl = 1.0;
     c[0] = sqrt(2.0 * std::numbers::pi);
     for(size_t k=1; k < numCoeff; k++)
     {
@@ -54,6 +54,6 @@ int main()
             Gamma(coeff1, x),
             Gamma(coeff4, x), 
             Gamma(coeff10, x), 
-            std::tgamma(x)); // built in gamma function
+            std::tgamma(x)); // built-in gamma function
     }
 }
