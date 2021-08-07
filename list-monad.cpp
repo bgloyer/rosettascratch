@@ -147,7 +147,8 @@ void PrintTriples(const vector<tuple<int,int,int>>& vec)
 }
 
 
-int main3()
+//int main()
+void main3()
 {
     // Apply Increment, Double, and NiceNumber to {2, 3, 4} using the monadic bind 
     auto listMonad = 

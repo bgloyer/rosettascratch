@@ -32,7 +32,8 @@ double Gamma(const std::vector<double>& coeffs, double x)
 }
 
 
-int main()
+//int main()
+void main_gamma()
 {
     // estimate the gamma function with 1, 4, and 10 coefficients
     const auto coeff1 = CalculateCoefficients(1);
