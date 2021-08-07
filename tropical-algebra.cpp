@@ -98,7 +98,9 @@ ostream& operator<<(ostream& os, const TropicalAlgebra& pt)
     return os;
 }
 
-int main(void) {
+//int main(void) 
+void main_ta(void) 
+{
     const TropicalAlgebra a(-2);
     const TropicalAlgebra b(-1);
     const TropicalAlgebra c(-0.5);
