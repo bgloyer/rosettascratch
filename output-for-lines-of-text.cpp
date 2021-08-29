@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 
-int main()
+void main_outputNumbers()
+//int main()
 {
     // read the number of lines
     int numberOfLines;
