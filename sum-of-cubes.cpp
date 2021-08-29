@@ -12,7 +12,8 @@ void PrintContainer(const auto& vec)
 }
 
 
-int main()
+void main2()
+//int main()
 {
     // define a lambda that cubes a value
     auto cube = [](auto x){return x * x * x;};

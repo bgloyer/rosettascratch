@@ -4,3 +4,10 @@
 {{out}}
 <pre>
 </pre>
+
+=={{header|C++}}==
+<lang cpp>
+</lang>
+{{out}}
+<pre>
+</pre>

@@ -12,6 +12,7 @@ project(list-monad LANGUAGES CXX)
 
 add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp
 gamma-function.cpp
+output-for-lines-of-text.cpp
 sum-of-cubes.cpp
 tropical-algebra.cpp
 writer-monad.cpp
