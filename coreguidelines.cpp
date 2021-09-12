@@ -40,9 +40,18 @@
         
     }
 
+    /*
+This rule does not apply to values that are used as a condition:
+    */
+void do_something(int*){}
 
 int maincg()
 {
+    int* ptr = nullptr;
+    
+    if (ptr) do_something(ptr);   // OK: ptr is used as condition
+    bool b = ptr;                 // bad: narrowing
+    
     auto s = std::make_shared<widget>(widget{5});
     
     WidgetUser  w(std::move(s));
