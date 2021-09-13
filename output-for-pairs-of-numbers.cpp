@@ -6,7 +6,8 @@ int doStuff(int a, int b) {
 	return a + b;
 }
  
-int main() {
+void mainpairs() {
+//int main() {
  
 	int t;
 	cin >> t;

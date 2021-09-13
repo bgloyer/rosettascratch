@@ -12,6 +12,7 @@ project(list-monad LANGUAGES CXX)
 
 add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp
 gamma-function.cpp
+halt-and-catch-fire.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
 sum-of-cubes.cpp
