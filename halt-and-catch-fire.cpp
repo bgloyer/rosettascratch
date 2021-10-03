@@ -1,5 +1,6 @@
 #include <stdexcept>
-int main()
+void mainhb()
+//int main()
 {
     throw std::runtime_error("boom");
 }

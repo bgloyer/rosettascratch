@@ -4,25 +4,3 @@
 {{out}}
 <pre>
 </pre>
-
-
-import Control.Monad
-main = do
-        number <- getLine 
-        input <- replicateM (read number) getLine
-        mapM_ putStrLn input
-
-
-'''Input:'''
-<pre>
-3
-hello
-hello world
-Pack my Box with 5 dozen liquor jugs
-</pre>
-{{out}}
-<pre>
-hello
-hello world
-Pack my Box with 5 dozen liquor jugs
-</pre>
