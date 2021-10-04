@@ -35,7 +35,7 @@ public:
   }
 };
 
-int main()
+int mainhsc()
 {
   double latitude, longitude, legalMeridian;
   std::cout << "Enter latitude:";

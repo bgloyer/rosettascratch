@@ -148,7 +148,7 @@ void Print(std::ranges::forward_range auto r)
     }
 }
 
-int main_py()
+void main_py()
 {
     //ScopeTimer st;
     vector<unsigned long long> inputs{100, 1000, 10'000, 100'000,

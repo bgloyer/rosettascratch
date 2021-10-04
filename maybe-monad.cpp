@@ -60,7 +60,8 @@ ostream& operator<<(ostream& s, optional<T> v)
     return s;
 }
 
-int mains()
+void mains()
+//int main()
 {
     // Use bind to compose SafeInverse and SafeAcos
     vector<double> tests {-2.5, -1, -0.5, 0, 0.5, 1, 2.5};

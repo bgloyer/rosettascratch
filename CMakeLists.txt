@@ -2,18 +2,15 @@ cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(list-monad LANGUAGES CXX)
+#project(list-monad LANGUAGES CXX)
+project(scratch LANGUAGES CXX)
 
-cmake_minimum_required(VERSION 3.0)
-
-set(CMAKE_CXX_STANDARD 20)
-
-project(list-monad LANGUAGES CXX)
-
-add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp
+add_executable(${PROJECT_NAME}
+amb.cpp
 gamma-function.cpp
 halt-and-catch-fire.cpp
 horizontal-sundial-calculations.cpp
+list-monad.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
 sum-of-cubes.cpp
