@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 #project(list-monad LANGUAGES CXX)
 project(scratch LANGUAGES CXX)
 
+add_compile_options(-Wall -Wextra -pedantic -Werror)
+
 add_executable(${PROJECT_NAME}
 amb.cpp
 gamma-function.cpp
