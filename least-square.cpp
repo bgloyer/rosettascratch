@@ -1,7 +1,7 @@
 #include <iostream>
 #include <ranges>
 
-int main()
+void main_ls()
 {
     const int maxSquare = 1000;
     auto squareCheck = [maxSquare](int i){return 2 * i - 1 > maxSquare;};

@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(scratch LANGUAGES CXX)
 
-add_compile_options(-Wall -Wextra -pedantic -Werror)
+add_compile_options(-Wall -Wextra -pedantic)# -Werror)
 
 add_executable(${PROJECT_NAME}
 amb.cpp
@@ -21,7 +21,6 @@ writer-monad.cpp
 maybe-monad.cpp
 start-from-a-main-routine.cpp
 pythagorean.cpp
-coreguidelines.cpp
 rosettaCode.txt
 )
 
