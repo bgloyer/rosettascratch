@@ -1,78 +1,80 @@
 #include <iostream>
+#include <string_view>
 #include <boost/hana.hpp>
 #include <boost/hana/experimental/printable.hpp>
-#include <string_view>
 
 using namespace std;
 namespace hana = boost::hana;
 
-constexpr auto Folder(auto f)
+// Define the Amb function.  The first parameter is the constraint to be
+// enforced followed by the potential values.
+constexpr auto Amb(auto constraint, auto&& ...params)
 {
-  return [f](auto a, auto b)
+  // create the set of all possible solutions
+  auto possibleSolutions = hana::cartesian_product(hana::tuple(params...));
+
+  // find one that matches the constraint
+  auto foldOperation = [constraint](auto a, auto b)
   {
-    bool isValid = hana::unpack(a, f);
-    return isValid ? a : b;
+    bool meetsConstraint = constraint(a);
+    return meetsConstraint ? a : b;
   };
+
+  return hana::fold_right(possibleSolutions, foldOperation);
 }
 
-constexpr auto Folder2(auto f)
+void AlgebraExample()
 {
-  return [f](auto a, auto b)
+  // use a tuple to hold the possible values of each variable
+  constexpr hana::tuple x{1, 2, 3};
+  constexpr hana::tuple y{7, 6, 4, 5};
+
+  // the constraint enforcing x * y == 8
+  constexpr auto constraint = [](auto t)
   {
-    bool isValid = f(a);
-    return isValid ? a : b;
+    return t[hana::size_c<0>] * t[hana::size_c<1>] == 8;
   };
-}
 
-constexpr auto Amb(auto f, auto params)
-{
-  
-}
-
-int main()
-{
-  hana::tuple x{1, 2, 3};
-  hana::tuple y{7, 6, 4, 5};
-
-  auto cross = hana::cartesian_product(hana::tuple{x, y});
-
-  constexpr auto xxxx = [](int x, int y){return x * y == 8;};
-
-  constexpr auto foldOp = Folder(xxxx);
-  auto result = hana::fold_right(cross, foldOp); 
+  // find the solution using the Amb function
+  auto result = Amb(constraint, x, y);
 
   cout << "\nx = " << hana::experimental::print(x);
   cout << "\ny = " << hana::experimental::print(y);
   cout << "\nx * y == 8: " << hana::experimental::print(result);
+}
 
-  auto words1 = hana::make_tuple("the"sv, "that"sv, "a"sv);
-  auto words2 = hana::make_tuple("frog"sv, "elephant"sv, "thing"sv);
-  auto words3 = hana::make_tuple("walked"sv, "treaded"sv, "grows"sv);
-  auto words4 = hana::make_tuple("slowly"sv, "quickly"sv);
+void StringExample()
+{
+  // the word lists to choose from
+  constexpr hana::tuple words1 {"the"sv, "that"sv, "a"sv};
+  constexpr hana::tuple words2 {"frog"sv, "elephant"sv, "thing"sv};
+  constexpr hana::tuple words3 {"walked"sv, "treaded"sv, "grows"sv};
+  constexpr hana::tuple words4 {"slowly"sv, "quickly"sv};
 
-  auto wordsCross = hana::cartesian_product(hana::tuple{words1, words2, words3, words4});
-
-  constexpr auto matches = [](const auto t)
+  // the constraint that the first letter of a word is the same as the last
+  // letter of the previous word
+  constexpr auto constraint = [](const auto t)
   {
-    auto first = hana::drop_back(t);
-    auto last = hana::drop_front(t);
-    auto adjacent = hana::zip(first, last);
-    auto bools = hana::transform(adjacent, [](auto t)
+    auto adjacent = hana::zip(hana::drop_back(t), hana::drop_front(t));
+    return hana::all_of(adjacent, [](auto t)
     {
       return t[hana::size_c<0>].back() == t[hana::size_c<1>].front();
     });
-    auto match = hana::fold_right(bools, [](bool b1, bool b2)
-    {
-      return b1 && b2;
-    });
-    return match;
   };
 
-  constexpr auto foldWordsOp = Folder2(matches);
-  auto wordResult = hana::fold_right(wordsCross, foldWordsOp);
+
+  // find the solution using the Amb function
+  auto wordResult = Amb(constraint, words1, words2, words3, words4);
+
   cout << "\n\nWords 1: " << hana::experimental::print(words1);
   cout << "\nWords 2: " << hana::experimental::print(words2);
   cout << "\nWords 3: " << hana::experimental::print(words3);
   cout << "\nWords 4: " << hana::experimental::print(words4);
   cout << "\nSolution: " << hana::experimental::print(wordResult) << "\n";
+}
+
+int main()
+{
+  AlgebraExample();
+  StringExample();
 }
