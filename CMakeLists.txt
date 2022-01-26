@@ -11,6 +11,7 @@ amb.cpp
 gamma-function.cpp
 halt-and-catch-fire.cpp
 horizontal-sundial-calculations.cpp
+iterators.cpp
 list-monad.cpp
 least-square.cpp
 output-for-lines-of-text.cpp

@@ -73,7 +73,8 @@ void StringExample()
   cout << "\nSolution: " << hana::experimental::print(wordResult) << "\n";
 }
 
-int main()
+//int main()
+void main_amb()
 {
   AlgebraExample();
   StringExample();
