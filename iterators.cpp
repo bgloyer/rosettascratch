@@ -28,7 +28,8 @@ void FirstFourthFifth(input_iterator auto it)
   cout << "\n";
 }
 
-int main()
+void main_it()
+//int main()
 {
   // Create two differnt kinds of containers of strings
   vector<string> days{"Sunday", "Monday", "Tuesday", "Wednesday",
