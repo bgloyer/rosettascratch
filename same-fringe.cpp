@@ -81,14 +81,11 @@ public:
 };
 
 struct Generator {
-  struct Promise;
+  struct promise_type;
 
-// compiler looks for promise_type
-  using promise_type=Promise;
-  coroutine_handle<Promise> coro;
-  //std::exception_ptr exception_;
+  coroutine_handle<promise_type> coro;
 
-  Generator(coroutine_handle<Promise> h): coro(h) {}
+  Generator(coroutine_handle<promise_type> h): coro(h) {}
 
   ~Generator() {
     if(coro)
@@ -106,13 +103,14 @@ struct Generator {
     return !coro.done();
   }
 
-  struct Promise {
+  struct promise_type {
 // current value of suspended coroutine
     int val;
+    std::exception_ptr exception_;
 
 // called by compiler first thing to get coroutine result
     Generator get_return_object() {
-      return Generator{coroutine_handle<Promise>::from_promise(*this)};
+      return Generator{coroutine_handle<promise_type>::from_promise(*this)};
     }
 
 // called by compiler first time co_yield occurs
@@ -137,7 +135,7 @@ struct Generator {
       return {};
     }
 
-    void unhandled_exception() { cout << "boom"; }// exception_ = std::current_exception(); }
+    void unhandled_exception() { exception_ = std::current_exception(); }
 
   };
 
@@ -232,7 +230,6 @@ bool Compare(const BinaryTree& tree1, const BinaryTree& tree2)
 {
   auto walker1 = WalkFringe(tree1);
   auto walker2 = WalkFringe(tree2);
-  bool same = true;
   for(;;)
   {
     bool n1 = walker1.next();
