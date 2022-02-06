@@ -11,40 +11,6 @@
 
 using namespace std;
 
-// template<typename T>
-// class BinaryTree
-// {
-//   unique_ptr<tuple<BinaryTree<T>, T, BinaryTree<T>>> m_tree;
-
-// public:
-//   BinaryTree() = default;
-//   template<typename U>
-//   BinaryTree(BinaryTree<T>&& leftChild, U value, BinaryTree<T>&& rightChild)
-//   : m_tree{make_unique<decltype(m_tree)>(make_tuple(move(leftChild), value, move(rightChild)))}{}
-//   // template<typename U>
-//   // BinaryTree(U&& value) : BinaryTree(BinaryTree{}, value, BinaryTree{}){}
-//   // template<typename U>
-//   // BinaryTree(BinaryTree&& leftChild, U&& value)
-//   // : BinaryTree(forward(leftChild), forward(value), BinaryTree{}){}
-//   // template<typename U>
-//   // BinaryTree(U&& value, BinaryTree&& rightChild)
-//   // : m_tree{tuple{BinaryTree{}, forward(value), forward(rightChild)}}{}
-
-//   template<typename U>
-//   void MMMM(U&& t)
-//   {
-//     T cp = t;
-//     cout << cp;
-//   }
-
-// };
-
-// template<typename T>
-// void XXXX(T&& t)
-// {
-//   auto a = forward<T>(t);
-// }
-
 class BinaryTree
 {
   using Node = tuple<BinaryTree, int, BinaryTree>;
@@ -59,7 +25,6 @@ public:
   : BinaryTree(move(leftChild), value, BinaryTree{}){}
   BinaryTree(int value, BinaryTree&& rightChild)
   : BinaryTree(BinaryTree{}, value, move(rightChild)){}
-  //~BinaryTree();
 
   explicit operator bool() const
   {
@@ -97,10 +62,10 @@ struct Generator {
   //template<typename T>
   class Iterator
   {
-    const coroutine_handle<promise_type>* m_h;
+    const coroutine_handle<promise_type>* m_h = nullptr;
 
   public:
-    constexpr Iterator() : m_h(nullptr){}
+    Iterator() = default;
     constexpr Iterator(const coroutine_handle<promise_type>* h) : m_h(h){}
 
     Iterator& operator++()
@@ -121,14 +86,14 @@ struct Generator {
       return m_h->promise().val;
     }
 
-    bool operator!=(monostate) const
+    bool operator!=(monostate) const noexcept
     {
       return m_h && !m_h->done();
     }
 
-    bool operator==(monostate) const
+    bool operator==(monostate) const noexcept
     {
-      return m_h->done();
+      return operator!=(monostate{});
     }
   };
 
@@ -193,21 +158,6 @@ namespace std {
         using iterator_category = std::input_iterator_tag;
     };
 }
-
-
-//BinaryTree::BinaryTree(BinaryTree&& leftChild, int value, BinaryTree&& rightChild) 
-//: m_tree {make_unique<remove_reference_t<decltype(*m_tree)>>(move(leftChild), value, move(rightChild))}
-
-//{
-
-  //auto tpl = make_tuple(move(leftChild), value, move(rightChild));
-  //m_tree = make_unique<tuple<BinaryTree, int, BinaryTree>>(move(leftChild), value, move(rightChild));
-//  m_tree = make_unique<remove_reference_t<decltype(*m_tree)>>(move(leftChild), value, move(rightChild));
-// // auto tpl2 = (move(tpl));
-  //auto tplp = new tuple<BinaryTree, int, BinaryTree>(move(tpl));
-  //m_tree.reset(tplp);
-//}
-  //: m_tree{make_unique<decltype(m_tree)>()}{}
 
 void PrintTree(const BinaryTree& tree)
 {
@@ -309,12 +259,15 @@ int main()
   auto walker = WalkTree(tree);
   auto walker2 = WalkTree(tree2);
   cout << "walking\n";
-  // while(walker.next())
-  // {
-  //   auto v = walker.value();
-  //   cout << "\nvalue: " << v;
-  // }
+  for(auto v : walker)
+  {
+    cout << "\nvalue: " << v;
+  }
   cout << "\n";
+  for(auto v : walker2)
+  {
+    cout << "\nvalue: " << v;
+  }
   cout << Compare(tree, tree2) << "\n";
   cout << Compare(tree3, tree2) << "\n";
   cout << Compare(tree, tree3) << "\n";
