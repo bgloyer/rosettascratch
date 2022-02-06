@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <coroutine>
 #include <iostream>
 #include <list>
@@ -93,16 +94,26 @@ struct Generator {
       coro.destroy();
   }
 
+  //template<typename T>
   class Iterator
   {
-    coroutine_handle<promise_type>* m_h;
+    const coroutine_handle<promise_type>* m_h;
 
   public:
-    Iterator(coroutine_handle<promise_type>* h) : m_h(h){}
+    constexpr Iterator() : m_h(nullptr){}
+    constexpr Iterator(const coroutine_handle<promise_type>* h) : m_h(h){}
 
-    void operator++()
+    Iterator& operator++()
     {
       m_h->resume();
+      return *this;
+    }
+
+    Iterator operator++(int)
+    {
+      auto old(*this);
+      m_h->resume();
+      return old;
     }
 
     int operator*() const
@@ -112,13 +123,17 @@ struct Generator {
 
     bool operator!=(monostate) const
     {
-      return !m_h->done();
+      return m_h && !m_h->done();
+    }
+
+    bool operator==(monostate) const
+    {
+      return m_h->done();
     }
   };
 
-  Iterator begin()
+  constexpr Iterator begin() const noexcept
   {
-    coro.resume();
     return Iterator(&coro);
   }
 
@@ -138,7 +153,7 @@ struct Generator {
     }
 
 // called by compiler first time co_yield occurs
-    suspend_always initial_suspend() {
+    suspend_never initial_suspend() {
       return {};
     }
 
@@ -164,6 +179,20 @@ struct Generator {
   };
 
 };
+
+namespace std {
+    template<>
+    class iterator_traits<Generator::Iterator>
+    {
+    public:
+        using difference_type = std::ptrdiff_t;
+        using size_type = std::size_t;
+        using value_type = int;
+        using pointer = int*;
+        using reference = int&;
+        using iterator_category = std::input_iterator_tag;
+    };
+}
 
 
 //BinaryTree::BinaryTree(BinaryTree&& leftChild, int value, BinaryTree&& rightChild) 
@@ -240,18 +269,19 @@ bool Compare(const BinaryTree& tree1, const BinaryTree& tree2)
 {
   auto walker1 = WalkFringe(tree1);
   auto walker2 = WalkFringe(tree2);
-  auto b1 = walker1.begin();
-  auto b2 = walker2.begin();
-  for(;;)
-  {
-    bool n1 = b1 != walker1.end();
-    bool n2 = b2 != walker2.end();
-    if(n1 != n2) return false;
-    if(!n1) return true;
-    cout << *b1 << " " << *b2 << "\n";
-    if(*b1 != *b2) return false;
-    ++b1; ++b2;
-  }
+  return ranges::equal(walker1.begin(), walker1.end(),
+               walker2.begin(), walker2.end());
+  // for(auto b1 = walker1.begin(), b2 = walker2.begin();
+  //     ;
+  //     ++b1, ++b2)
+  // {
+  //   bool n1 = b1 != walker1.end();
+  //   bool n2 = b2 != walker2.end();
+  //   if(n1 != n2) return false;
+  //   if(!n1) return true;
+  //   cout << *b1 << " " << *b2 << "\n";
+  //   if(*b1 != *b2) return false;
+  // }
 
 }
 
