@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <tuple>
+#include <variant>
 #include <vector>
 
 using namespace std;
@@ -31,7 +32,7 @@ using namespace std;
 //   template<typename U>
 //   void MMMM(U&& t)
 //   {
-//     T cp = t; 
+//     T cp = t;
 //     cout << cp;
 //   }
 
@@ -92,15 +93,38 @@ struct Generator {
       coro.destroy();
   }
 
-// get current value of coroutine
-  int value() {
-    return coro.promise().val;
+  class Iterator
+  {
+    coroutine_handle<promise_type>* m_h;
+
+  public:
+    Iterator(coroutine_handle<promise_type>* h) : m_h(h){}
+
+    void operator++()
+    {
+      m_h->resume();
+    }
+
+    int operator*() const
+    {
+      return m_h->promise().val;
+    }
+
+    bool operator!=(monostate) const
+    {
+      return !m_h->done();
+    }
+  };
+
+  Iterator begin()
+  {
+    coro.resume();
+    return Iterator(&coro);
   }
 
-// advance coroutine past suspension
-  bool next() {
-    coro.resume();
-    return !coro.done();
+  constexpr monostate end() const noexcept
+  {
+    return monostate{};
   }
 
   struct promise_type {
@@ -141,15 +165,6 @@ struct Generator {
 
 };
 
-Generator myCoroutineFunction(int n) {
-
-  for(int i = 0; i < n; ++i) {
-    co_yield i;
-  }
-
-}
-
-//BinaryTree::~BinaryTree() = default;
 
 //BinaryTree::BinaryTree(BinaryTree&& leftChild, int value, BinaryTree&& rightChild) 
 //: m_tree {make_unique<remove_reference_t<decltype(*m_tree)>>(move(leftChild), value, move(rightChild))}
@@ -182,16 +197,14 @@ Generator WalkTree(const BinaryTree& tree)
   if(tree)
   {
     auto walker = WalkTree(tree.LeftChild());
-    while(walker.next())
+    for(auto v : walker)
     {
-      auto v = walker.value();
       co_yield v;
     }
     co_yield tree.Value();
     auto walker2 = WalkTree(tree.RightChild());
-    while(walker2.next())
+    for(auto v : walker2)
     {
-      auto v = walker2.value();
       co_yield v;
     }
   }
@@ -209,16 +222,13 @@ Generator WalkFringe(const BinaryTree& tree)
       co_yield tree.Value();
     }
 
-    auto walker = WalkFringe(left);
-    while(walker.next())
+    for(auto v : WalkFringe(left))
     {
-      auto v = walker.value();
       co_yield v;
     }
-    auto walker2 = WalkFringe(right);
-    while(walker2.next())
+
+    for(auto v : WalkFringe(right))
     {
-      auto v = walker2.value();
       co_yield v;
     }
   }
@@ -230,14 +240,17 @@ bool Compare(const BinaryTree& tree1, const BinaryTree& tree2)
 {
   auto walker1 = WalkFringe(tree1);
   auto walker2 = WalkFringe(tree2);
+  auto b1 = walker1.begin();
+  auto b2 = walker2.begin();
   for(;;)
   {
-    bool n1 = walker1.next();
-    bool n2 = walker2.next();
+    bool n1 = b1 != walker1.end();
+    bool n2 = b2 != walker2.end();
     if(n1 != n2) return false;
     if(!n1) return true;
-    cout << walker1.value() << " " << walker2.value() << "\n";
-    if(walker1.value() != walker2.value()) return false;
+    cout << *b1 << " " << *b2 << "\n";
+    if(*b1 != *b2) return false;
+    ++b1; ++b2;
   }
 
 }
@@ -247,7 +260,15 @@ int main()
   // const int x = 7;
   // //XXXX(x);
 //  BinaryTree<int> tree(BinaryTree<int>{}, 7, BinaryTree<int>{});
-  BinaryTree tree(BinaryTree{6}, 77, BinaryTree{BinaryTree{3}, 77, BinaryTree{77, BinaryTree{9}}});
+  BinaryTree tree(
+      BinaryTree{6},
+    77,
+      BinaryTree{
+          BinaryTree{3},
+        77,
+          BinaryTree{
+            77,
+              BinaryTree{9}}});
   BinaryTree tree2(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{BinaryTree{3}, 77, BinaryTree{9}}});
   BinaryTree tree3(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{77, BinaryTree{9}}});
   BinaryTree tree4(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{BinaryTree{4}, 77, BinaryTree{9}}});
