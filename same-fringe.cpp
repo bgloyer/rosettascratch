@@ -88,12 +88,13 @@ struct Generator {
 
     bool operator!=(monostate) const noexcept
     {
+      return !m_h->done();
       return m_h && !m_h->done();
     }
 
     bool operator==(monostate) const noexcept
     {
-      return operator!=(monostate{});
+      return !operator!=(monostate{});
     }
   };
 
@@ -219,8 +220,15 @@ bool Compare(const BinaryTree& tree1, const BinaryTree& tree2)
 {
   auto walker1 = WalkFringe(tree1);
   auto walker2 = WalkFringe(tree2);
-  return ranges::equal(walker1.begin(), walker1.end(),
+  auto b = ranges::equal(walker1.begin(), walker1.end(),
                walker2.begin(), walker2.end());
+
+  cout << (b ? "True" : "False") << "\n";
+  auto mm = ranges::mismatch(walker1.begin(), walker1.end(),
+               walker2.begin(), walker2.end());
+  cout << *mm.in1 << " - " << *mm.in2 << "\n";              
+  return b;
+
   // for(auto b1 = walker1.begin(), b2 = walker2.begin();
   //     ;
   //     ++b1, ++b2)
@@ -268,7 +276,20 @@ int main()
   {
     cout << "\nvalue: " << v;
   }
+  cout << "\n";
+  for(auto fwalker1 = WalkFringe(tree); auto v : fwalker1)
+  {
+    cout << v << " ";
+  }
+  cout << "\n";
+  for(auto fwalker1 = WalkFringe(tree2); auto v : fwalker1)
+  {
+    cout << v << " ";
+  }
+  cout << "\n";
+
   cout << Compare(tree, tree2) << "\n";
+  cout << Compare(tree, tree) << "\n";
   cout << Compare(tree3, tree2) << "\n";
   cout << Compare(tree, tree3) << "\n";
   cout << Compare(tree, tree4) << "\n";
