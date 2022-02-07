@@ -1,23 +1,24 @@
 #include <algorithm>
 #include <coroutine>
 #include <iostream>
-#include <list>
 #include <memory>
-#include <optional>
-#include <string>
 #include <tuple>
 #include <variant>
-#include <vector>
 
 using namespace std;
 
 class BinaryTree
 {
+  // C++ does not have a built in tree type.  The binary tree is a recursive
+  // data type that is represented by an empty tree or a node the has a value
+  // and a left and right sub-tree.  A tuple represents the node and unique_ptr
+  // represents an empty vs. non-empty tree.
   using Node = tuple<BinaryTree, int, BinaryTree>;
   unique_ptr<Node> m_tree;
 
 public:
-  BinaryTree() = default;
+  // Provide ways to make trees
+  BinaryTree() = default; // Make an empty tree
   BinaryTree(BinaryTree&& leftChild, int value, BinaryTree&& rightChild)
   : m_tree {make_unique<Node>(move(leftChild), value, move(rightChild))} {}
   BinaryTree(int value) : BinaryTree(BinaryTree{}, value, BinaryTree{}){}
@@ -26,40 +27,63 @@ public:
   BinaryTree(int value, BinaryTree&& rightChild)
   : BinaryTree(BinaryTree{}, value, move(rightChild)){}
 
+  // Test if the tree is empty
   explicit operator bool() const
   {
     return (bool)m_tree;
   }
 
+  // Get the value of the root node of the tree
   int Value() const
   {
     return get<1>(*m_tree);
   }
 
+  // Get the left child tree
   const BinaryTree& LeftChild() const
   {
     return get<0>(*m_tree);
   }
 
+  // Get the right child tree
   const BinaryTree& RightChild() const
   {
     return get<2>(*m_tree);
   }
 };
 
-struct Generator {
-  struct promise_type;
+// Define a promise type to be used for coroutines
+struct TreeWalker {
+  struct promise_type {
+    int val;
+
+    suspend_never initial_suspend() noexcept {return {};}
+    suspend_never return_void() noexcept {return {};}
+    suspend_always final_suspend() noexcept {return {};}
+    void unhandled_exception() noexcept { }
+
+    TreeWalker get_return_object() 
+    {
+      return TreeWalker{coroutine_handle<promise_type>::from_promise(*this)};
+    }
+
+    suspend_always yield_value(int x) noexcept 
+    {
+      val=x;
+      return {};
+    }
+  };
 
   coroutine_handle<promise_type> coro;
 
-  Generator(coroutine_handle<promise_type> h): coro(h) {}
+  TreeWalker(coroutine_handle<promise_type> h): coro(h) {}
 
-  ~Generator() {
-    if(coro)
-      coro.destroy();
+  ~TreeWalker()
+  {
+    if(coro) coro.destroy();
   }
 
-  //template<typename T>
+  // Define an iterator type to work with the coroutine
   class Iterator
   {
     const coroutine_handle<promise_type>* m_h = nullptr;
@@ -107,48 +131,12 @@ struct Generator {
   {
     return monostate{};
   }
-
-  struct promise_type {
-// current value of suspended coroutine
-    int val;
-    std::exception_ptr exception_;
-
-// called by compiler first thing to get coroutine result
-    Generator get_return_object() {
-      return Generator{coroutine_handle<promise_type>::from_promise(*this)};
-    }
-
-// called by compiler first time co_yield occurs
-    suspend_never initial_suspend() {
-      return {};
-    }
-
-// required for co_yield
-    suspend_always yield_value(int x) {
-      val=x;
-      return {};
-    }
-
-// called by compiler for coroutine without return
-    suspend_never return_void() {
-      return {};
-    }
-
-// called by compiler last thing to await final result
-// coroutine cannot be resumed after this is called
-    suspend_always final_suspend() noexcept {
-      return {};
-    }
-
-    void unhandled_exception() { exception_ = std::current_exception(); }
-
-  };
-
 };
 
+// Allow the iterator to be used like a standard library iterator
 namespace std {
     template<>
-    class iterator_traits<Generator::Iterator>
+    class iterator_traits<TreeWalker::Iterator>
     {
     public:
         using difference_type = std::ptrdiff_t;
@@ -160,38 +148,8 @@ namespace std {
     };
 }
 
-void PrintTree(const BinaryTree& tree)
-{
-  if(tree)
-  {
-    cout << "(";
-    PrintTree(tree.LeftChild());
-    cout << tree.Value();
-    PrintTree(tree.RightChild());
-    cout <<")";
-  }
-}
-
-Generator WalkTree(const BinaryTree& tree)
-{
-  if(tree)
-  {
-    auto walker = WalkTree(tree.LeftChild());
-    for(auto v : walker)
-    {
-      co_yield v;
-    }
-    co_yield tree.Value();
-    auto walker2 = WalkTree(tree.RightChild());
-    for(auto v : walker2)
-    {
-      co_yield v;
-    }
-  }
-  co_return;
-}
-
-Generator WalkFringe(const BinaryTree& tree)
+// A coroutine that iterates though all of the fringe nodes
+TreeWalker WalkFringe(const BinaryTree& tree)
 {
   if(tree)
   {
@@ -199,6 +157,7 @@ Generator WalkFringe(const BinaryTree& tree)
     auto& right = tree.RightChild();
     if(!left && !right)
     {
+      // a fringe node because it has no children
       co_yield tree.Value();
     }
 
@@ -215,88 +174,48 @@ Generator WalkFringe(const BinaryTree& tree)
   co_return;
 }
 
-
-bool Compare(const BinaryTree& tree1, const BinaryTree& tree2)
+// Print a tree
+void PrintTree(const BinaryTree& tree)
 {
+  if(tree)
+  {
+    cout << "(";
+    PrintTree(tree.LeftChild());
+    cout << tree.Value();
+    PrintTree(tree.RightChild());
+    cout <<")";
+  }
+}
+
+// Compare two trees
+void Compare(const BinaryTree& tree1, const BinaryTree& tree2)
+{
+  // Create a lazy range for both trees
   auto walker1 = WalkFringe(tree1);
   auto walker2 = WalkFringe(tree2);
-  auto b = ranges::equal(walker1.begin(), walker1.end(),
+  
+  // Compare the ranges.
+  bool sameFringe = ranges::equal(walker1.begin(), walker1.end(),
                walker2.begin(), walker2.end());
-
-  cout << (b ? "True" : "False") << "\n";
-  auto mm = ranges::mismatch(walker1.begin(), walker1.end(),
-               walker2.begin(), walker2.end());
-  cout << *mm.in1 << " - " << *mm.in2 << "\n";              
-  return b;
-
-  // for(auto b1 = walker1.begin(), b2 = walker2.begin();
-  //     ;
-  //     ++b1, ++b2)
-  // {
-  //   bool n1 = b1 != walker1.end();
-  //   bool n2 = b2 != walker2.end();
-  //   if(n1 != n2) return false;
-  //   if(!n1) return true;
-  //   cout << *b1 << " " << *b2 << "\n";
-  //   if(*b1 != *b2) return false;
-  // }
-
+  
+  // Print the results
+  PrintTree(tree1);
+  cout << (sameFringe ? " has same fringe as " : " has different fringe than ");
+  PrintTree(tree2);
+  cout << "\n";
 }
 
 int main()
 {
-  // const int x = 7;
-  // //XXXX(x);
-//  BinaryTree<int> tree(BinaryTree<int>{}, 7, BinaryTree<int>{});
-  BinaryTree tree(
-      BinaryTree{6},
-    77,
-      BinaryTree{
-          BinaryTree{3},
-        77,
-          BinaryTree{
-            77,
-              BinaryTree{9}}});
-  BinaryTree tree2(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{BinaryTree{3}, 77, BinaryTree{9}}});
+  // Create two trees that that are different but have the same fringe nodes
+  BinaryTree tree1(BinaryTree{6}, 77, BinaryTree{BinaryTree{3}, 77,
+    BinaryTree{77, BinaryTree{9}}});
+  BinaryTree tree2(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{
+    BinaryTree{3}, 77, BinaryTree{9}}});
+  // Create a tree with a different fringe
   BinaryTree tree3(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{77, BinaryTree{9}}});
-  BinaryTree tree4(BinaryTree{BinaryTree{BinaryTree{6}, 77}, 77, BinaryTree{BinaryTree{4}, 77, BinaryTree{9}}});
-  BinaryTree tree5;
-  PrintTree(tree);
-  cout << "\n";
-  PrintTree(tree2);
-  auto walker = WalkTree(tree);
-  auto walker2 = WalkTree(tree2);
-  cout << "walking\n";
-  for(auto v : walker)
-  {
-    cout << "\nvalue: " << v;
-  }
-  cout << "\n";
-  for(auto v : walker2)
-  {
-    cout << "\nvalue: " << v;
-  }
-  cout << "\n";
-  for(auto fwalker1 = WalkFringe(tree); auto v : fwalker1)
-  {
-    cout << v << " ";
-  }
-  cout << "\n";
-  for(auto fwalker1 = WalkFringe(tree2); auto v : fwalker1)
-  {
-    cout << v << " ";
-  }
-  cout << "\n";
 
-  cout << Compare(tree, tree2) << "\n";
-  cout << Compare(tree, tree) << "\n";
-  cout << Compare(tree3, tree2) << "\n";
-  cout << Compare(tree, tree3) << "\n";
-  cout << Compare(tree, tree4) << "\n";
-  cout << Compare(tree, tree5) << "\n";
-  cout << Compare(tree5, tree5) << "\n";
-  // BinaryTree<int> t;
-  // t.MMMM(x);
-  // t.MMMM(3);
-
+  // Compare the trees
+  Compare(tree1, tree2);
+  Compare(tree1, tree3);
 }
