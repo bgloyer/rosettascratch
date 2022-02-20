@@ -205,7 +205,8 @@ void Compare(const BinaryTree& tree1, const BinaryTree& tree2)
   cout << "\n";
 }
 
-int main()
+//int main()
+void main_sf()
 {
   // Create two trees that that are different but have the same fringe nodes
   BinaryTree tree1(BinaryTree{6}, 77, BinaryTree{BinaryTree{3}, 77,

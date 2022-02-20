@@ -16,6 +16,7 @@ list-monad.cpp
 least-square.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
+printmatrix.cpp
 same-fringe.cpp
 sum-of-cubes.cpp
 tropical-algebra.cpp
