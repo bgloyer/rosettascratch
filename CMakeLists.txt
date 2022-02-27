@@ -8,6 +8,7 @@ add_compile_options(-Wall -Wextra -pedantic)# -Werror)
 
 add_executable(${PROJECT_NAME}
 amb.cpp
+first-class-functions-numbers.cpp
 gamma-function.cpp
 halt-and-catch-fire.cpp
 horizontal-sundial-calculations.cpp

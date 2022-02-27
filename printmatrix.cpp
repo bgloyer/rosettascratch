@@ -18,7 +18,7 @@ void PrintMatrix(std::predicate<int, int, int> auto f, int size)
 }
 
 
-int main()
+void main_pm()
 {
   // a lambda to create diagonals
   auto diagonals = [](int x, int y, int size)
