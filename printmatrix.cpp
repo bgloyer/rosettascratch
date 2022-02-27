@@ -1,5 +1,6 @@
 #include <concepts>
 #include <iostream>
+#include <stdio.h>
 
 // Print each element of a matrix according to a predicate.  It
 // will print a '1' if the predicate function is true, otherwise '0'. 
@@ -43,4 +44,6 @@ int main()
   PrintMatrix(mosaic, 9);
   PrintMatrix(fourSides, 8);
   PrintMatrix(fourSides, 9);
+
+  printf("\33[2J");
 }
