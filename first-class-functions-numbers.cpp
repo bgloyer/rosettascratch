@@ -1,7 +1,7 @@
 #include <array>
 #include <iostream>
 
-int main()
+void main_fcfn()
 {
   double x  = 2.0;
   double xi = 0.5;

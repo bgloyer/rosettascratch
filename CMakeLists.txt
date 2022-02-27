@@ -13,8 +13,9 @@ gamma-function.cpp
 halt-and-catch-fire.cpp
 horizontal-sundial-calculations.cpp
 iterators.cpp
-list-monad.cpp
 least-square.cpp
+list-monad.cpp
+literals-floating-point.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
 printmatrix.cpp
