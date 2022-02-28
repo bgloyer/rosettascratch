@@ -1,6 +1,7 @@
 #include <iostream>
 
-int main()
+
+void main_lfp()
 {
   // a numeric literal with decimal point is a double
   auto double1 = 2.5;

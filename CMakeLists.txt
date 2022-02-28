@@ -20,6 +20,7 @@ output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
 printmatrix.cpp
 same-fringe.cpp
+sum-data-type.cpp
 sum-of-cubes.cpp
 tropical-algebra.cpp
 writer-monad.cpp
