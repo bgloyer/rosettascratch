@@ -1,12 +1,4 @@
-=={{header|C++}}==
-<lang cpp>
-</lang>
-{{out}}
-<pre>
-</pre>
-
-=={{header|C++}}==
-<lang cpp>#include <iostream>
+#include <iostream>
 #include <boost/multiprecision/cpp_int.hpp>
 
 using namespace boost::multiprecision;
@@ -51,7 +43,8 @@ public:
     }
 };
 
-int main()
+void main_pi()
+//int main()
 {
     Gospers g;
 
@@ -61,8 +54,17 @@ int main()
     {
         std::cout << *++g;  // increment to the next digit and print
     }
-}</lang>
-{{out}}
-<pre>
-3.1415926535897932384626433832795028841971693993751058209749445923078164062862 . . . 
-</pre>
+}
+
+//             if(n == (q*(675*i-216)+125*r)/(125*t))
+//             {
+// //                std::cout << n << " q:" << q << " r:" << r << " t:" << t << " n:" << n << " i:" << i << "\n";
+// //                std::cout << n << " r:" << r << " t:" << t << " n:" << n << " i:" << i << "\n";
+
+//                 break;
+
+
+//             }
+//             else
+//            {
+//                std::cout << " r:" << r << " t:" << t << " n:" << n << " i:" << i << "\n";

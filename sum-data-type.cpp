@@ -46,7 +46,8 @@ void PrintTree(const Tree& tree)
   std::cout <<")";
 }
 
-int main()
+//int main()
+void main_sdt()
 {
   std::cout << "myVariant: " << get<std::string>(myVariant) << "\n";
 

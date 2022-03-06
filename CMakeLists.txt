@@ -26,6 +26,7 @@ tropical-algebra.cpp
 writer-monad.cpp
 maybe-monad.cpp
 start-from-a-main-routine.cpp
+pi.cpp
 pythagorean.cpp
 rosettaCode.txt
 )
