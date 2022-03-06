@@ -12,6 +12,7 @@ first-class-functions-numbers.cpp
 gamma-function.cpp
 halt-and-catch-fire.cpp
 horizontal-sundial-calculations.cpp
+host-introspection.cpp
 iterators.cpp
 least-square.cpp
 list-monad.cpp
