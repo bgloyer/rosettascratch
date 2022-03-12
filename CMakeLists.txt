@@ -17,18 +17,19 @@ iterators.cpp
 least-square.cpp
 list-monad.cpp
 literals-floating-point.cpp
+maybe-monad.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
+pi.cpp
 printmatrix.cpp
+pythagorean.cpp
 same-fringe.cpp
+special-variables.cpp
+start-from-a-main-routine.cpp
 sum-data-type.cpp
 sum-of-cubes.cpp
 tropical-algebra.cpp
 writer-monad.cpp
-maybe-monad.cpp
-start-from-a-main-routine.cpp
-pi.cpp
-pythagorean.cpp
 rosettaCode.txt
 )
 

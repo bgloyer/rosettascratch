@@ -1,7 +1,8 @@
 #include <bit>
 #include <iostream>
 
-int main()
+void main_hi()
+//int main()
 {
     std::cout << "int is " << sizeof(int) << " bytes\n";
     std::cout << "a pointer is " << sizeof(int*) << " bytes\n\n";
