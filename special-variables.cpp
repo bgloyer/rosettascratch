@@ -17,7 +17,8 @@ struct SpecialVariables
 
 };
 
-int main()
+void main_sv()
+//int main()
 {
     SpecialVariables sv;
     auto sv2 = ++sv;     // makes a copy of sv after it was incremented

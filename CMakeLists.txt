@@ -15,6 +15,7 @@ horizontal-sundial-calculations.cpp
 host-introspection.cpp
 iterators.cpp
 least-square.cpp
+link-list-removal.cpp
 list-monad.cpp
 literals-floating-point.cpp
 maybe-monad.cpp
