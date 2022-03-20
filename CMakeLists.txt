@@ -18,6 +18,7 @@ least-square.cpp
 link-list-removal.cpp
 list-monad.cpp
 literals-floating-point.cpp
+longest-string-challenge.cpp
 maybe-monad.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp

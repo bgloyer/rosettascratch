@@ -37,7 +37,8 @@ link* RemoveItem(int valueToRemove, link*&head)
     return nullptr;
 }
 
-int main()
+void main_llr()
+//int main()
 {
     // link some nodes into a list
     link link33{33, nullptr};
