@@ -26,6 +26,7 @@ pi.cpp
 printmatrix.cpp
 pythagorean.cpp
 same-fringe.cpp
+scratch.cpp
 special-variables.cpp
 start-from-a-main-routine.cpp
 sum-data-type.cpp

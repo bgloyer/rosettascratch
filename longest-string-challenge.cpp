@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string.h>
  
-int main()
+int main_lsc()
 {
     std::string longLine, longestLines, newLine;
 
