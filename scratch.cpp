@@ -1,25 +1,36 @@
-#include <array>
+#include <deque>
+#include <map>
 #include <iostream>
+#include <string>
 
 int main()
 {
-  constexpr std::array s {1,2,2,3,4,4,5};
+  std::map<char, std::deque<char>> rep = 
+    {{'a', {'A', 'B', 'a', 'C', 'D'}},
+     {'b', {'E'}},
+     {'r', {'r', 'F'}}};
 
-  if(!s.empty())
+  std::string magic = "abracadabra";
+  for(auto it = magic.begin(); it != magic.end(); ++it)
   {
-    int previousValue = s[0];
-
-    for(size_t i = 1; i < s.size(); ++i)
+    if(auto f = rep.find(*it); f != rep.end() && !f->second.empty())
     {
-      // in C++, variables in block scope are reset at each iteration
-      const int currentValue = s[i];
-
-      if(i > 0 && previousValue == currentValue)
-      {
-        std::cout << i << "\n";
-      }
-
-      previousValue = currentValue;
+      *it = f->second.front();
+      f->second.pop_front();
     }
   }
+
+  std::cout << magic << "\n";
 }
+
+/*
+  the first 'a' with 'A'
+the second 'a' with 'B'
+the fourth 'a' with 'C'
+the fifth 'a' with 'D'
+the first 'b' with 'E'
+the second 'r' with 'F'
+*/
+
+/// AErBcadCbFD
+/// AErBcadCbFD
