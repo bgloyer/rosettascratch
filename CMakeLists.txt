@@ -8,6 +8,7 @@ add_compile_options(-Wall -Wextra -pedantic)# -Werror)
 
 add_executable(${PROJECT_NAME}
 amb.cpp
+church-numerals.cpp
 first-class-functions-numbers.cpp
 gamma-function.cpp
 halt-and-catch-fire.cpp
@@ -25,7 +26,7 @@ output-for-pairs-of-numbers.cpp
 pi.cpp
 printmatrix.cpp
 pythagorean.cpp
-same-fringe.cpp
+# same-fringe.cpp
 scratch.cpp
 special-variables.cpp
 start-from-a-main-routine.cpp

@@ -3,7 +3,8 @@
 #include <iostream>
 #include <string>
 
-int main()
+void mainscr()
+//int main()
 {
   std::map<char, std::deque<char>> rep = 
     {{'a', {'A', 'B', 'a', 'C', 'D'}},

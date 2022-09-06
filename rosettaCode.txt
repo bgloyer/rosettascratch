@@ -1,13 +1,11 @@
 =={{header|C++}}==
-<lang cpp>
-</lang>
+<syntaxhighlight lang="cpp"></syntaxhighlight>
 {{out}}
 <pre>
 </pre>
 
 =={{header|C++}}==
-<lang cpp>
-</lang>
+<syntaxhighlight lang="cpp"></syntaxhighlight>
 {{out}}
 <pre>
 </pre>
