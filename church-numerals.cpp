@@ -109,7 +109,8 @@ int ToInt(auto church) {
     return church([](int n){ return n + 1; })(0);
 }
 
-int main() {
+void main_chnm() {
+//int main() {
     // show some examples
     auto three = Successor(Successor(Successor(Zero)));
     auto four = Successor(three);

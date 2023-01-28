@@ -8,7 +8,8 @@ add_compile_options(-Wall -Wextra -pedantic)# -Werror)
 
 add_executable(${PROJECT_NAME}
 amb.cpp
-church-numerals.cpp
+# church-numerals.cpp
+euler-constant.cpp
 first-class-functions-numbers.cpp
 gamma-function.cpp
 halt-and-catch-fire.cpp
@@ -23,7 +24,7 @@ longest-string-challenge.cpp
 maybe-monad.cpp
 output-for-lines-of-text.cpp
 output-for-pairs-of-numbers.cpp
-pi.cpp
+# pi.cpp
 printmatrix.cpp
 pythagorean.cpp
 # same-fringe.cpp
