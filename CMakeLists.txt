@@ -15,6 +15,7 @@ gamma-function.cpp
 halt-and-catch-fire.cpp
 horizontal-sundial-calculations.cpp
 host-introspection.cpp
+inner-class.cpp
 iterators.cpp
 least-square.cpp
 link-list-removal.cpp

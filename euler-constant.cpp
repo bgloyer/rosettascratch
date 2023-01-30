@@ -60,7 +60,7 @@ double ByEulersMethod()
 }
 
 
-int main()
+void ec_main()
 {
     std::cout << std::setprecision(16) << "Vacca series:  " << ByVaccaSeries(32);
     std::cout << std::setprecision(16) << "\nEulers method: " << ByEulersMethod();
